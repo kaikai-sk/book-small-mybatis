@@ -1,10 +1,12 @@
 package cn.bugstack.mybatis.session;
 
-import cn.bugstack.mybatis.XNode;
 import cn.bugstack.mybatis.binding.MapperRegistry;
+import cn.bugstack.mybatis.datasource.druid.DruidDataSourceFactory;
+import cn.bugstack.mybatis.mapping.Environment;
 import cn.bugstack.mybatis.mapping.MappedStatement;
+import cn.bugstack.mybatis.transaction.jdbc.JdbcTransactionFactory;
+import cn.bugstack.mybatis.type.TypeAliasRegistry;
 
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +26,15 @@ public class Configuration {
      * 映射的语句，存在Map里
      */
     protected final Map<String, MappedStatement> mappedStatements = new HashMap<>();
+
+    protected Environment environment;
+
+    protected TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
+
+    public Configuration() {
+        typeAliasRegistry.registerAlias("JDBC", JdbcTransactionFactory.class);
+        typeAliasRegistry.registerAlias("DRUID", DruidDataSourceFactory.class);
+    }
 
     public void addMappers(String packageName) {
         mapperRegistry.addMappers(packageName);
@@ -49,4 +60,15 @@ public class Configuration {
         return mappedStatements.get(id);
     }
 
+    public TypeAliasRegistry getTypeAliasRegistry() {
+        return typeAliasRegistry;
+    }
+
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    public Environment getEnvironment() {
+        return environment;
+    }
 }
